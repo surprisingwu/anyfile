@@ -3,7 +3,6 @@ const promisify = require('util').promisify
 const stat = promisify(fs.stat)
 const readdir = promisify(fs.readdir)
 const Handlebars = require('handlebars')
-const config = require('../config/defaultConfig')
 const path = require('path')
 const mime = require('./mime')
 const compress = require('./compress')
@@ -16,7 +15,7 @@ const template = Handlebars.compile(source.toString())
 
 
 
-module.exports = async function(req, res, filePath) {
+module.exports = async function(req, res, filePath,config) {
   try {
     const stats = await stat(filePath)
     if (stats.isFile()) {

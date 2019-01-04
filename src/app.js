@@ -1,15 +1,27 @@
 const http = require('http')
 const path = require('path')
-const config = require('./config/defaultConfig')
+const conf = require('./config/defaultConfig')
 const route = require('./helper/route')
-const {host,port,root} = config
+const openUrl = require('./helper/openUrl')
 
-const server = http.createServer((req,res)=>{
-  const filePath = path.join(root, req.url)
-  route(req,res,filePath)
 
-})
+class Server{
+  constructor(config = {}) { 
+    this.conf = Object.assign({},conf, config)
+  }
 
-server.listen(port, host, ()=>{
-  console.log(`server starts at http://${host}:${port}`);
-})
+  start() { 
+    const {host,port,root} = this.conf
+    const server = http.createServer((req,res)=>{
+      const filePath = path.join(root, req.url)
+      route(req,res,filePath, this.conf)
+    })
+    server.listen(port, host, () => {
+      const url = `http://${host}:${port}`
+      openUrl(url)
+      console.log(`server starts at ${url}`);
+    })
+  }
+}
+
+module.exports = Server
